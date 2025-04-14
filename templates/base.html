@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PetMatch</title>
+    <style>
+        /* Embedded Styles for Navigation and Layout */
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #fff8e5;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background: #ffcc70;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            padding: 6px 10px;
+            border-radius: 8px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .nav-links a.active,
+        .nav-links a:hover {
+            background: #ffa94d;
+            color: white;
+        }
+
+        main {
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">🐾 PetMatch</div>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('dashboard') }}" class="{% if request.path == '/dashboard' %}active{% endif %}">Dashboard</a></li>
+            <li><a href="{{ url_for('adopt') }}" class="{% if request.path == '/adopt' %}active{% endif %}">Adopt</a></li>
+            <li><a href="{{ url_for('about') }}" class="{% if request.path == '/about' %}active{% endif %}">About</a></li>
+            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        {% block body %}{% endblock %}
+    </main>
+</body>
+</html>

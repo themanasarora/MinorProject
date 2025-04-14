@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% block body %}
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #fefaf0;
+  }
+
+  .welcome-section {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    color: #333;
+    text-align: center;
+    padding: 60px 20px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+  }
+
+  .carousel-section {
+    margin-bottom: 40px;
+  }
+
+  .carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .carousel::-webkit-scrollbar {
+    display: none;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    margin-top: 10px;
+  }
+
+  .pet-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    padding: 15px;
+    text-align: center;
+  }
+
+  .pet-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+
+  .filter-form, .add-pet-form {
+    background: #fff;
+    padding: 30px;
+    margin: 40px auto;
+    border-radius: 12px;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  }
+
+  input, select, button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+  }
+
+  button {
+    background-color: #ff6f61;
+    color: white;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #ff3d3d;
+  }
+</style>
+
+<div class="container">
+  <!-- Welcome Section -->
+  <div class="welcome-section">
+    <h1>Welcome, {{ username }}!</h1>
+    <p>Glad to have you on your dashboard 💖</p>
+    <a href="{{ url_for('logout') }}">
+      <button>Logout</button>
+    </a>
+  </div>
+
+  <!-- Pet Carousel Section -->
+  <div class="carousel-section">
+    <h2 style="text-align:center;">Explore Available Pets</h2>
+    <div class="carousel" id="pet-carousel">
+      <!-- Filled dynamically with JS -->
+    </div>
+  </div>
+
+  <!-- Filter Pets Form -->
+  <form class="filter-form" id="filter-form">
+    <h3>Find Pets Near You</h3>
+    <label for="location">Location:</label>
+    <input type="text" name="location" placeholder="e.g., Los Angeles" required>
+    <label for="type">Pet Type:</label>
+    <select name="type">
+      <option value="">Any</option>
+      <option value="dog">Dog</option>
+      <option value="cat">Cat</option>
+    </select>
+    <button type="submit">Search</button>
+  </form>
+
+  <!-- Filtered Pets Section -->
+  <div class="carousel-section" id="filtered-pets-section" style="display: none;">
+    <h2 style="text-align:center;">Pets Matching Your Search</h2>
+    <div class="grid" id="filtered-pets">
+      <!-- Filtered pets will show here -->
+    </div>
+  </div>
+
+  <!-- Add Pet Form -->
+  <form class="add-pet-form" action="/add-pet" method="POST">
+    <h3>Add a New Pet</h3>
+    <input type="text" name="name" placeholder="Pet Name" required>
+    <input type="text" name="breed" placeholder="Breed" required>
+    <input type="text" name="age" placeholder="Age (e.g., 2 Yrs)" required>
+    <input type="text" name="location" placeholder="Location" required>
+    <input type="text" name="image_url" placeholder="Image URL" required>
+    <button type="submit">Add Pet</button>
+  </form>
+</div>
+
+<script>
+  async function loadPets() {
+    const res = await fetch("/api/pets");
+    const pets = await res.json();
+    const carousel = document.getElementById("pet-carousel");
+    carousel.innerHTML = pets.map(pet => `
+      <div class="pet-card">
+        <img src="${pet.image_url}" alt="${pet.name}">
+        <h4>${pet.name}</h4>
+        <p><strong>${pet.breed}</strong></p>
+        <p>${pet.age} | ${pet.location}</p>
+      </div>
+    `).join("");
+  }
+
+  document.getElementById("filter-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const location = e.target.location.value.toLowerCase();
+    const type = e.target.type.value.toLowerCase();
+
+    const res = await fetch("/api/pets");
+    const pets = await res.json();
+    const filtered = pets.filter(pet =>
+      (!location || pet.location.toLowerCase().includes(location)) &&
+      (!type || pet.breed.toLowerCase().includes(type))
+    );
+
+    const section = document.getElementById("filtered-pets-section");
+    const filteredContainer = document.getElementById("filtered-pets");
+
+    if (filtered.length === 0) {
+      section.style.display = "none";
+      filteredContainer.innerHTML = "";
+    } else {
+      section.style.display = "block";
+      filteredContainer.innerHTML = filtered.map(pet => `
+        <div class="pet-card">
+          <img src="${pet.image_url}" alt="${pet.name}">
+          <h4>${pet.name}</h4>
+          <p><strong>${pet.breed}</strong></p>
+          <p>${pet.age} | ${pet.location}</p>
+        </div>
+      `).join("");
+    }
+  });
+
+  loadPets();
+</script>
+{% endblock %}

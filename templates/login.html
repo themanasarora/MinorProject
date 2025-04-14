@@ -1,0 +1,105 @@
+
+<link rel="stylesheet" href="/static/style.css" />
+
+<div class="container">
+    <div class="login-card">
+        <div class="logo">
+            <h2>Pet Adoption</h2>
+        </div>
+        <h1>WELCOME!</h1>
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert {{ category }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form id="auth-form" method="POST">
+            <label>Email</label>
+            <input type="email" name="username" placeholder="Enter Username" class="input-field" required />
+            
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Enter Password" class="input-field" required />
+
+            <input type="submit" value="Login" class="login-btn" onclick="setActionForm('login')" />
+
+            <p class="register-text">
+                New here? <a href="#" onclick="setActionForm('register')">Register</a>
+            </p>
+        </form>
+    </div>
+</div>
+
+<script>
+    function setActionForm(action) {
+        let form = document.getElementById('auth-form');
+        if (action === 'login') {
+            form.action = "{{ url_for('login') }}";
+            form.method = 'post';
+        } else if (action === 'register') {
+            form.action = "{{ url_for('register') }}";
+            form.method = 'post';
+        }
+        form.submit();
+    }
+</script>
+
+<style>
+    .alert {
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    .alert.error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .alert.success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .login-btn {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 10px;
+        font-size: 16px;
+    }
+
+    .login-btn:hover {
+        background-color: #0056b3;
+    }
+
+    .register-text {
+        text-align: center;
+        margin-top: 15px;
+        font-size: 14px;
+        color: #555;
+    }
+
+    .register-text a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .register-text a:hover {
+        text-decoration: underline;
+    }
+</style>
+
