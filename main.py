@@ -166,7 +166,10 @@ def add_sample_pets():
 
 @app.route("/adopt")
 def adopt():
-    return render_template("adopt.html")
+    pets = Pet.query.all()
+    return render_template("adopt.html", pets=pets)
+
+
 
 @app.route("/about")
 def about():
@@ -177,6 +180,39 @@ def logout():
     session.clear()
     return redirect(url_for("login"))
 
+@app.route("/pet/<int:pet_id>")
+def pet_info(pet_id):
+    pet = Pet.query.get_or_404(pet_id)
+    return render_template("petinfo.html", pet=pet)
+
+
+@app.route("/add-more-sample-pets")
+def add_more_sample_pets():
+    more_pets = [
+        Pet(name="Luna", breed="Husky", age="2 Yrs", location="Bangalore", image_url="https://place-puppy.com/310x310"),
+        Pet(name="Max", breed="Beagle", age="4 Yrs", location="Pune", image_url="https://place-puppy.com/311x311"),
+        Pet(name="Chloe", breed="Pomeranian", age="3 Yrs", location="Chennai", image_url="https://place-puppy.com/312x312"),
+        Pet(name="Milo", breed="German Shepherd", age="2 Yrs 6 Mos", location="Mumbai", image_url="https://place-puppy.com/313x313"),
+        Pet(name="Loki", breed="Siberian Husky", age="5 Yrs", location="Delhi", image_url="https://place-puppy.com/314x314"),
+        Pet(name="Zoe", breed="Shih Tzu", age="1 Yr 4 Mos", location="Hyderabad", image_url="https://place-puppy.com/315x315"),
+        Pet(name="Leo", breed="Labrador", age="3 Yrs", location="Ahmedabad", image_url="https://place-puppy.com/316x316"),
+        Pet(name="Nala", breed="Dalmatian", age="2 Yrs", location="Kolkata", image_url="https://place-puppy.com/317x317"),
+        Pet(name="Bailey", breed="Boxer", age="1 Yr", location="Lucknow", image_url="https://place-puppy.com/318x318"),
+        Pet(name="Rocky", breed="Doberman", age="3 Yrs 8 Mos", location="Nagpur", image_url="https://place-puppy.com/319x319"),
+        Pet(name="Coco", breed="French Bulldog", age="2 Yrs", location="Patna", image_url="https://place-puppy.com/320x320"),
+        Pet(name="Buddy", breed="Cocker Spaniel", age="4 Yrs", location="Bhopal", image_url="https://place-puppy.com/321x321"),
+        Pet(name="Daisy", breed="Pug", age="2 Yrs 2 Mos", location="Indore", image_url="https://place-puppy.com/322x322"),
+        Pet(name="Oscar", breed="Great Dane", age="5 Yrs", location="Jaipur", image_url="https://place-puppy.com/323x323"),
+        Pet(name="Mochi", breed="Rottweiler", age="3 Yrs 1 Mo", location="Surat", image_url="https://place-puppy.com/324x324"),
+        Pet(name="Simba", breed="Golden Retriever", age="2 Yrs 5 Mos", location="Noida", image_url="https://place-puppy.com/325x325"),
+        Pet(name="Lilly", breed="Maltese", age="2 Yrs", location="Thane", image_url="https://place-puppy.com/326x326"),
+        Pet(name="Bruno", breed="Chow Chow", age="1 Yr 9 Mos", location="Kanpur", image_url="https://place-puppy.com/327x327"),
+        Pet(name="Teddy", breed="Pekingese", age="2 Yrs 6 Mos", location="Guwahati", image_url="https://place-puppy.com/328x328"),
+        Pet(name="Ginger", breed="Chihuahua", age="3 Yrs", location="Chandigarh", image_url="https://place-puppy.com/329x329"),
+    ]
+    db.session.add_all(more_pets)
+    db.session.commit()
+    return "20 new sample pets added!"
 
 
 

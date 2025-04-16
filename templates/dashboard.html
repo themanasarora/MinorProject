@@ -7,8 +7,8 @@
   }
 
   .welcome-section {
-    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-    color: #333;
+    background: linear-gradient(135deg, #B7A125 0%, #4269C0 100%);
+    color: white;
     text-align: center;
     padding: 60px 20px;
     border-radius: 12px;
@@ -31,6 +31,25 @@
     display: none;
   }
 
+  .carousel .pet-card {
+    min-width: 260px;
+    flex: 0 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    text-align: center;
+    border: 2px solid #B7A125;
+  }
+
+  .carousel .pet-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -43,9 +62,9 @@
     background: white;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    width: 100%;
     padding: 15px;
     text-align: center;
+    border: 2px solid #4269C0;
   }
 
   .pet-card img {
@@ -61,9 +80,9 @@
     padding: 30px;
     margin: 40px auto;
     border-radius: 12px;
-    width: 80%;
-    max-width: 600px;
+    width: 90%;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+    border-top: 5px solid #B7A125;
   }
 
   input, select, button {
@@ -71,31 +90,30 @@
     padding: 12px;
     margin-top: 10px;
     border-radius: 8px;
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
     font-size: 16px;
   }
 
   button {
-    background-color: #ff6f61;
+    background-color: #4269C0;
     color: white;
     font-weight: bold;
     border: none;
     cursor: pointer;
+    transition: background-color 0.3s ease;
   }
 
   button:hover {
-    background-color: #ff3d3d;
+    background-color: #2f4fa3;
   }
 </style>
+
 
 <div class="container">
   <!-- Welcome Section -->
   <div class="welcome-section">
     <h1>Welcome, {{ username }}!</h1>
     <p>Glad to have you on your dashboard 💖</p>
-    <a href="{{ url_for('logout') }}">
-      <button>Logout</button>
-    </a>
   </div>
 
   <!-- Pet Carousel Section -->
@@ -146,14 +164,36 @@
     const pets = await res.json();
     const carousel = document.getElementById("pet-carousel");
     carousel.innerHTML = pets.map(pet => `
-      <div class="pet-card">
-        <img src="${pet.image_url}" alt="${pet.name}">
-        <h4>${pet.name}</h4>
-        <p><strong>${pet.breed}</strong></p>
-        <p>${pet.age} | ${pet.location}</p>
-      </div>
-    `).join("");
+  <a href="/pet/${pet.id}" class="pet-card" style="text-decoration: none; color: inherit;">
+    <img src="${pet.image_url}" alt="${pet.name}">
+    <h4>${pet.name}</h4>
+    <p><strong>${pet.breed}</strong></p>
+    <p>${pet.age} | ${pet.location}</p>
+  </a>
+`).join("");
+
   }
+
+  function autoScrollCarousel() {
+    const carousel = document.getElementById("pet-carousel");
+    let scrollAmount = 0;
+    const scrollStep = 2;
+    const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+
+    setInterval(() => {
+      if (scrollAmount >= maxScroll) {
+        scrollAmount = 0;
+        carousel.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        scrollAmount += scrollStep;
+        carousel.scrollBy({ left: scrollStep, behavior: 'smooth' });
+      }
+    }, 50);
+  }
+
+  loadPets().then(autoScrollCarousel);
+
+  
 
   document.getElementById("filter-form").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -176,13 +216,14 @@
     } else {
       section.style.display = "block";
       filteredContainer.innerHTML = filtered.map(pet => `
-        <div class="pet-card">
-          <img src="${pet.image_url}" alt="${pet.name}">
-          <h4>${pet.name}</h4>
-          <p><strong>${pet.breed}</strong></p>
-          <p>${pet.age} | ${pet.location}</p>
-        </div>
-      `).join("");
+  <a href="/pet/${pet.id}" class="pet-card" style="text-decoration: none; color: inherit;">
+    <img src="${pet.image_url}" alt="${pet.name}">
+    <h4>${pet.name}</h4>
+    <p><strong>${pet.breed}</strong></p>
+    <p>${pet.age} | ${pet.location}</p>
+  </a>
+`).join("");
+
     }
   });
 

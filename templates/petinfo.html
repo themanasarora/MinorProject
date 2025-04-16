@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container" style="padding: 40px;">
+  <div class="pet-card" style="margin: 0 auto; max-width: 400px;">
+    <img src="{{ pet.image_url }}" alt="{{ pet.name }}">
+    <h2>{{ pet.name }}</h2>
+    <p><strong>Breed:</strong> {{ pet.breed }}</p>
+    <p><strong>Age:</strong> {{ pet.age }}</p>
+    <p><strong>Location:</strong> {{ pet.location }}</p>
+  </div>
+</div>
+{% endblock %}
