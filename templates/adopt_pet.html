@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container mt-5" style="max-width: 600px;">
+  <h2>Adopt {{ pet.name }}</h2>
+  <form method="POST">
+    <div class="mb-3">
+      <label>Your Full Name</label>
+      <input type="text" name="name" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label>Email</label>
+      <input type="email" name="email" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label>Contact Number</label>
+      <input type="text" name="contact" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label>Why do you want to adopt {{ pet.name }}?</label>
+      <textarea name="reason" class="form-control" rows="3" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-success">Submit Request</button>
+  </form>
+</div>
+{% endblock %}

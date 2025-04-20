@@ -32,6 +32,25 @@ class Pet(db.Model):
     age = db.Column(db.String(50), nullable=False)
     location = db.Column(db.String(100), nullable=False)
     image_url = db.Column(db.Text, nullable=False)
+    
+    
+class Adoption(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    pet_id = db.Column(db.Integer, db.ForeignKey('pet.id'), nullable=False)
+    
+    # Denormalized pet info
+    pet_name = db.Column(db.String(100), nullable=False)
+    pet_breed = db.Column(db.String(100), nullable=False)
+    pet_image_url = db.Column(db.Text, nullable=True)
+
+    adopter_name = db.Column(db.String(100), nullable=False)
+    adopter_email = db.Column(db.String(120), nullable=False)
+    contact_number = db.Column(db.String(20), nullable=False)
+    reason = db.Column(db.Text, nullable=True)
+    timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    pet = db.relationship('Pet', backref=db.backref('adoptions', lazy=True))
+
 
 
 #routing
@@ -168,6 +187,37 @@ def add_sample_pets():
 def adopt():
     pets = Pet.query.all()
     return render_template("adopt.html", pets=pets)
+
+
+@app.route('/adopt/<int:pet_id>', methods=['GET', 'POST'])
+def adopt_pet(pet_id):
+    pet = Pet.query.get_or_404(pet_id)
+
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        contact = request.form['contact']
+        reason = request.form['reason']
+
+        new_adoption = Adoption(
+        pet_id=pet.id,
+        pet_name=pet.name,
+        pet_breed=pet.breed,
+        pet_image_url=pet.image_url,
+        adopter_name=name,
+        adopter_email=email,
+        contact_number=contact,
+        reason=reason
+    )
+
+
+        db.session.add(new_adoption)
+        db.session.commit()
+        flash(f"Adoption request for {pet.name} submitted successfully!", "success")
+        return redirect(url_for('adopt'))
+
+    return render_template('adopt_pet.html', pet=pet)
+
 
 
 

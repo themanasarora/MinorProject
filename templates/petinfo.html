@@ -1,12 +1,96 @@
 {% extends "base.html" %}
 {% block body %}
-<div class="container" style="padding: 40px;">
-  <div class="pet-card" style="margin: 0 auto; max-width: 400px;">
+<style>
+  .pet-detail-container {
+    padding: 60px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to right, #fceabb, #f8b500);
+    min-height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .pet-card {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    text-align: center;
+    animation: fadeIn 0.6s ease;
+  }
+
+  .pet-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    object-fit: cover;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .pet-card h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 10px;
+  }
+
+  .pet-card p {
+    font-size: 1.1rem;
+    margin: 8px 0;
+    color: #555;
+  }
+
+  .pet-card strong {
+    color: #000;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .adopt-btn {
+    display: inline-block;
+    background-color: #ff914d;
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, transform 0.2s;
+  }
+  
+  .adopt-btn:hover {
+    background-color: #ff6b1f;
+    transform: scale(1.05);
+  }
+  
+  .adopt-btn:active {
+    transform: scale(0.98);
+  }
+  
+</style>
+
+<div class="pet-detail-container">
+  <div class="pet-card">
     <img src="{{ pet.image_url }}" alt="{{ pet.name }}">
     <h2>{{ pet.name }}</h2>
     <p><strong>Breed:</strong> {{ pet.breed }}</p>
     <p><strong>Age:</strong> {{ pet.age }}</p>
     <p><strong>Location:</strong> {{ pet.location }}</p>
+
+
+
+    <a href="/adopt/{{ pet.id }}" class="adopt-btn">🐾 Adopt Me</a>
+
   </div>
+
+
+  
 </div>
 {% endblock %}
