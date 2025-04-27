@@ -2,6 +2,7 @@
 from flask import Flask, render_template,request, url_for, redirect,session,flash,jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
+import openai
 
 app= Flask(__name__)
 app.secret_key="secretkey"
@@ -228,7 +229,7 @@ def about():
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect(url_for("login"))
+    return redirect(url_for("home"))
 
 @app.route("/pet/<int:pet_id>")
 def pet_info(pet_id):
@@ -263,6 +264,37 @@ def add_more_sample_pets():
     db.session.add_all(more_pets)
     db.session.commit()
     return "20 new sample pets added!"
+
+
+
+
+
+# Set your OpenAI API key
+@app.route('/chat', methods=['POST'])
+def chat():
+    user_message = request.json['message']
+
+    # Call HuggingFace free chatbot model
+    api_url = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium"
+
+    headers = {
+        "Authorization": "Bearer YOUR_HUGGINGFACE_TOKEN"  # optional if you have a free token
+    }
+
+    payload = {
+        "inputs": {
+            "text": user_message
+        }
+    }
+
+    response = requests.post(api_url, json=payload, headers=headers)
+
+    if response.status_code == 200:
+        bot_response = response.json()['generated_text']
+    else:
+        bot_response = "Sorry, I couldn't process that right now. Please try again later."
+
+    return jsonify({'response': bot_response})
 
 
 
