@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+{% block body %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About | PetMatch</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <!-- Styling -->
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #fef8ee;
+    }
+
+
+
+    .container {
+      text-align: center;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    #map {
+      height: 500px;
+      width: 80%;
+      margin: 20px auto;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+
+    .info-section {
+        width: 80%;
+        margin: 40px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        text-align: left;
+      }
+      .info-section h3 {
+        margin-bottom: 10px;
+        color: #444;
+      }
+      .info-section p {
+        color: #666;
+      }
+      .info-section p {
+        color: #666;
+      }
+      .features {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 30px;
+      }
+      .feature-card {
+        background: #fff;
+        margin: 15px;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        width: 280px;
+        transition: transform 0.3s;
+      }
+      .feature-card:hover {
+        transform: translateY(-5px);
+      }
+      .feature-card h4 {
+        margin-bottom: 10px;
+        color: #333;
+      }
+      .feature-card p {
+        color: #777;
+        font-size: 0.9rem;
+      }
+  </style>
+</head>
+
+<body>
+
+
+  <!-- Main Content -->
+  <div class="container">
+    <h2>Nearby Pet Hospitals</h2>
+    <p>Find trusted veterinary clinics and hospitals near you. 🏥🐕</p>
+    <div id="map"></div>
+  </div>
+
+  <div class="info-section">
+    <h3>About PetMatch</h3>
+    <p>PetMatch connects pet parents with trusted veterinary clinics, grooming centers, and emergency services nearby. We aim to make pet care easy and accessible for everyone.</p>
+  </div>
+
+  
+<div class="info-section">
+    <h3>Why Choose Us?</h3>
+    <div class="features">
+      <div class="feature-card">
+        <h4>Verified Listings</h4>
+        <p>All hospitals and clinics listed are verified to ensure quality care for your pets.</p>
+      </div>
+      <div class="feature-card">
+        <h4>Live Location</h4>
+        <p>Get real-time directions to nearby veterinary centers with our integrated maps.</p>
+      </div>
+      <div class="feature-card">
+        <h4>Community Support</h4>
+        <p>Join a growing community of pet lovers sharing their experiences and tips.</p>
+      </div>
+      <div class="feature-card">
+        <h4>Emergency Services</h4>
+        <p>Find 24x7 emergency clinics near you for immediate medical attention.</p>
+      </div>
+    </div>
+</div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <script>
+    var map = L.map('map').setView([22.7196, 75.8577], 13); // Default: Indore
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        const userLat = position.coords.latitude;
+        const userLng = position.coords.longitude;
+
+        map.setView([userLat, userLng], 14);
+
+        L.marker([userLat, userLng])
+          .addTo(map)
+          .bindPopup("You are here")
+          .openPopup();
+      });
+    }
+
+    const hospitals = [
+      { name: "PetZone Veterinary Clinic", lat: 19.0827, lng: 72.7411, url: "https://petzone.com" },
+      { name: "Crown Vet Mumbai", lat: 19.0760, lng: 72.8777, url: "https://crownvet.com" },
+      { name: "Happy Tails Mumbai", lat: 19.0851, lng: 72.9082, url: "https://happytailsmumbai.com" },
+      { name: "CGS Hospital", lat: 28.5562, lng: 77.1000, url: "https://cgshospital.com" },
+      { name: "Max Vets", lat: 28.6833, lng: 77.2115, url: "https://maxvets.com" },
+      { name: "Apollo Vet Clinic", lat: 28.6096, lng: 77.2226, url: "https://apollovets.com" },
+      { name: "Cessna Lifeline Veterinary Hospital", lat: 12.9351, lng: 77.6100, url: "https://cessnalifelinevets.com" },
+      { name: "PetZone Bangalore", lat: 12.9716, lng: 77.5946, url: "https://petzonebangalore.com" },
+      { name: "Care Veterinary Hospital", lat: 12.9259, lng: 77.6141, url: "https://carevets.com" },
+      { name: "Vetic Animal Hospital", lat: 17.3850, lng: 78.4867, url: "https://veticanimalhospital.com" },
+      { name: "Dr. Rao's Pet Clinic", lat: 17.4260, lng: 78.4891, url: "https://drraospetclinic.com" },
+      { name: "PetSpot Hyderabad", lat: 17.4496, lng: 78.3908, url: "https://petspot.com" },
+      { name: "Blue Cross of India", lat: 13.0331, lng: 80.2594, url: "https://bluecrossindia.org" },
+      { name: "Cloud9 Veterinary Hospital", lat: 13.0827, lng: 80.2707, url: "https://cloud9vets.com" },
+      { name: "Pet Care Hospital", lat: 13.0205, lng: 80.2273, url: "https://petcarehospital.com" },
+      { name: "Care Veterinary Clinic", lat: 22.5726, lng: 88.3639, url: "https://carevetclinic.com" },
+      { name: "The Calcutta Pet Clinic", lat: 22.5720, lng: 88.3633, url: "https://calcutta-petclinic.com" },
+      { name: "Pets & Vets", lat: 22.5392, lng: 88.3733, url: "https://petsandvets.com" },
+      { name: "PetPoint Veterinary Clinic", lat: 18.5204, lng: 73.8567, url: "https://petpointvets.com" },
+      { name: "Cure and Care Pet Clinic", lat: 18.5097, lng: 73.8545, url: "https://curecarepetclinic.com" },
+      { name: "The Healing Paw", lat: 18.5254, lng: 73.8671, url: "https://healingpaw.com" },
+      { name: "Raja Pet Clinic", lat: 23.0225, lng: 72.5714, url: "https://rajapetclinic.com" },
+      { name: "Angel Pet Clinic", lat: 23.0305, lng: 72.5858, url: "https://angelpetclinic.com" },
+      { name: "Petsville Veterinary Clinic", lat: 23.0420, lng: 72.5736, url: "https://petsvillevets.com" },
+      { name: "Myra Pet Clinic & Surgery Centre", lat: 22.7342, lng: 75.8585, url: "https://www.myrapetclinic.co.in/" },
+      { name: "Indore Pet Clinic", lat: 22.7139, lng: 75.8575, url: "https://www.healthfrog.in/hospital/pet-clinics/madhya-pradesh/indore" },
+      { name: "Dr. R K Jain Interpet The Pets Clinic", lat: 22.7254, lng: 75.8645, url: "https://www.healthfrog.in/hospital/pet-clinics/madhya-pradesh/indore" },
+      { name: "Panacea Veterinary Clinic", lat: 22.7164, lng: 75.8567, url: "https://threebestrated.in/veterinary-hospitals-in-indore-mp" },
+      { name: "PetVet Veterinary Clinic", lat: 22.7121, lng: 75.8612, url: "https://indore.idbf.in/4066211/petvet-veterinary-clinic" },
+      { name: "Dr. Nigam Pet's Clinic", lat: 22.7253, lng: 75.8703, url: "https://dr-nigam-home-tutor.business.site/" },
+      { name: "Shri Sai Advanced Pets Polyclinic", lat: 22.7182, lng: 75.8693, url: "https://www.clickedindia.net/Indore/pet-clinics.htm" },
+      { name: "Pets Passion Clinic", lat: 22.7105, lng: 75.8580, url: "https://yellowpages.webindia123.com/d-py/madhya-pradesh/indore/pet-clinics-651/1/" },
+      { name: "Pet Aid Clinic", lat: 22.7217, lng: 75.8591, url: "https://yellowpages.webindia123.com/d-py/madhya-pradesh/indore/pet-clinics-651/1/" },
+      { name: "Pet Clinic - Silver Arch Colony", lat: 22.7201, lng: 75.8602, url: "https://www.google.com/search?q=Pet+Clinic+-+Silver+Arch+Colony" },
+      { name: "Bark n Purr Pet Clinic", lat: 23.2599, lng: 77.4126, url: "https://barknpurr.com" },
+      { name: "Dr. Vet Bhopal", lat: 23.2671, lng: 77.3953, url: "https://drvetbhopal.com" },
+      { name: "Animal Care Centre", lat: 23.2453, lng: 77.4521, url: "https://animalcarecentre.com" }
+    ];
+
+    hospitals.forEach(hospital => {
+      L.marker([hospital.lat, hospital.lng])
+        .addTo(map)
+        .bindPopup(`<a href="${hospital.url}" target="_blank">${hospital.name}</a>`);
+    });
+  </script>
+
+</body>
+</html>
+{% endblock %}
